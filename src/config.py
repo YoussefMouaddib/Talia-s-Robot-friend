@@ -1,7 +1,7 @@
 # config.py
 
 # LLM
-LLM_MODEL_PATH = "../models/llama_4b/"
+LLM_MODEL_PATH = "../models/llama_model/"
 MAX_TOKENS = 300
 USE_GPU = True
 
