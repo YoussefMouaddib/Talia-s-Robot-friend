@@ -1,6 +1,8 @@
 ## File structure: 
 # WSL 
+
 laptop_host/
+
 ├── models/
 
 │   ├── llama_3_4b_8bit/           # LLM weights
