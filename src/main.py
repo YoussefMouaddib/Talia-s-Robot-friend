@@ -12,7 +12,7 @@ from datetime import datetime
 tcp = TCPServer(TCP_HOST, TCP_PORT)
 tcp.accept_connection()
 
-llm = LLMHandler(LLM_MODEL_PATH, MAX_TOKENS, USE_GPU)
+llm = LLMHandler(LLM_MODEL_PATH, MAX_TOKENS)
 memory = MemoryManager(VECTOR_DB_PATH, METADATA_JSON)
 logger = Logger(LOG_PATH)
 embedder = SentenceTransformer("../models/embeddings_model/")
