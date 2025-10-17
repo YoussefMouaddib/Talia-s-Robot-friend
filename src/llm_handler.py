@@ -1,25 +1,29 @@
 # llm_handler.py
-from transformers import AutoModelForCausalLM, AutoTokenizer
-import torch
+from llama_cpp import Llama
 
 class LLMHandler:
-    def __init__(self, model_path, max_tokens=300, use_gpu=True):
-        self.device = "cuda" if torch.cuda.is_available() and use_gpu else "cpu"
-        self.tokenizer = AutoTokenizer.from_pretrained(model_path)
-        self.model = AutoModelForCausalLM.from_pretrained(
-            model_path,
-            device_map="auto" if self.device=="cuda" else None,
-            torch_dtype=torch.float16 if self.device=="cuda" else torch.float32
-        )
+    def __init__(self, model_path, max_tokens=300):
+        """
+        model_path: path to your GGUF model
+        max_tokens: max tokens per generation
+        """
         self.max_tokens = max_tokens
+        self.model = Llama(
+            model_path=model_path,
+            n_ctx=2048,       # context length
+            n_threads=4,      # adjust based on your CPU cores
+            n_gpu_layers=0    # 0 for CPU-only
+        )
 
     def generate_reply(self, prompt):
-        inputs = self.tokenizer(prompt, return_tensors="pt").to(self.device)
-        outputs = self.model.generate(
-            **inputs,
-            max_new_tokens=self.max_tokens,
-            do_sample=True,
-            temperature=0.8
+        """
+        Generates a response from the LLaMA GGUF model.
+        """
+        response = self.model(
+            prompt,
+            max_tokens=self.max_tokens,
+            temperature=0.8,
+            top_p=0.95,
+            stop=["\nUser:", "\nTalia:"]
         )
-        reply = self.tokenizer.decode(outputs[0], skip_special_tokens=True)
-        return reply
+        return response['choices'][0]['text'].strip()
